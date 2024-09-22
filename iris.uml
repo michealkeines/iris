@@ -1,0 +1,109 @@
+@startuml
+
+' Define core components
+class CustomNetworkLayer {
+  - client_factory: HttpClientFactory
+  - ssl_manager: SSLManager
+  - proxy_manager: ProxyManager
+  - retry_policy: RetryPolicy
+  - cookie_manager: CookieManager
+  - timeout_manager: TimeoutManager
+  - rate_limiter: RateLimiter
+  - connection_pool: ConnectionPool
+  - error_logger: ErrorLogger
+  - metrics_collector: MetricsCollector
+  + send_request(req: Request)
+  + configure_ssl(options: SSLConfig)
+  + set_proxy(proxy: ProxyConfig)
+  + configure_timeout(duration: u64)
+  + acquire_rate_limit()
+}
+
+class HttpClientFactory {
+  + create_client(http_version: HttpVersion): HyperClient
+}
+
+class RequestBuilder {
+  + method: HttpMethod
+  + headers: Headers
+  + body: Body
+  + version: HttpVersion
+  + build(): Request
+}
+
+class ResponseHandler {
+  + handle_response(): Response
+  + mock_response(mock_data: ResponseMock)
+  + replay_response(response_id: String)
+}
+
+class ProxyManager {
+  - proxies: Vec<Proxy>
+  + set_proxy(proxy: ProxyConfig)
+}
+
+class SSLManager {
+  - ssl_options: SSLConfig
+  + load_ca_cert(cert_path: String)
+  + disable_validation()
+}
+
+class CookieManager {
+  - cookies: HashMap
+  + add_cookie(domain: String, cookie: Cookie)
+  + get_cookie(domain: String): Option<Cookie>
+}
+
+class RetryPolicy {
+  - retries: u32
+  + should_retry(response: Response): bool
+}
+
+class TimeoutManager {
+  - timeout: Duration
+  + configure_timeout(duration: u64)
+}
+
+class RateLimiter {
+  - limit_per_second: u32
+  - interval: Duration
+  + acquire(): bool
+}
+
+class ConnectionPool {
+  - max_connections: u32
+  + acquire_connection(): Connection
+  + release_connection(conn: Connection)
+}
+
+class ErrorLogger {
+  + log_error(err: Error)
+}
+
+class MetricsCollector {
+  + collect_request_metrics(req: Request)
+  + collect_response_metrics(res: Response)
+}
+
+enum HttpVersion {
+  HTTP_1_1
+  HTTP_2
+  HTTP_3
+}
+
+CustomNetworkLayer --> HttpClientFactory
+CustomNetworkLayer --> RequestBuilder
+CustomNetworkLayer --> ResponseHandler
+CustomNetworkLayer --> ProxyManager
+CustomNetworkLayer --> SSLManager
+CustomNetworkLayer --> CookieManager
+CustomNetworkLayer --> RetryPolicy
+CustomNetworkLayer --> TimeoutManager
+CustomNetworkLayer --> RateLimiter
+CustomNetworkLayer --> ConnectionPool
+CustomNetworkLayer --> ErrorLogger
+CustomNetworkLayer --> MetricsCollector
+RequestBuilder --> HttpVersion
+HttpClientFactory --> HttpVersion
+
+@enduml
