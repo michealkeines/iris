@@ -1,3 +1,11 @@
 pub mod customNetworkLayer;
 pub mod decoder;
 pub mod config;
+pub mod tls;
+pub mod error;
+pub mod cookie;
+pub mod redirect;
+pub mod proxy;
+pub mod into_url;
+pub mod util;
+pub mod body;
