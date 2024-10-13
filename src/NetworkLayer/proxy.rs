@@ -88,9 +88,7 @@ pub enum ProxyScheme {
         auth: Option<HeaderValue>,
         host: http::uri::Authority,
     },
-    #[cfg(feature = "socks")]
     Socks4 { addr: SocketAddr },
-    #[cfg(feature = "socks")]
     Socks5 {
         addr: SocketAddr,
         auth: Option<(String, String)>,
@@ -102,7 +100,7 @@ impl ProxyScheme {
     fn maybe_http_auth(&self) -> Option<&HeaderValue> {
         match self {
             ProxyScheme::Http { auth, .. } | ProxyScheme::Https { auth, .. } => auth.as_ref(),
-            #[cfg(feature = "socks")]
+            
             _ => None,
         }
     }
@@ -622,11 +620,11 @@ impl ProxyScheme {
                 let header = encode_basic_auth(&username.into(), &password.into());
                 *auth = Some(header);
             }
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks4 { .. } => {
                 panic!("Socks4 is not supported for this method")
             }
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks5 { ref mut auth, .. } => {
                 *auth = Some((username.into(), password.into()));
             }
@@ -641,11 +639,11 @@ impl ProxyScheme {
             ProxyScheme::Https { ref mut auth, .. } => {
                 *auth = Some(header_value);
             }
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks4 { .. } => {
                 panic!("Socks4 is not supported for this method")
             }
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks5 { .. } => {
                 panic!("Socks5 is not supported for this method")
             }
@@ -664,9 +662,9 @@ impl ProxyScheme {
                     *auth = update.clone();
                 }
             }
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks4 { .. } => {}
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks5 { .. } => {}
         }
 
@@ -721,9 +719,9 @@ impl ProxyScheme {
         match self {
             ProxyScheme::Http { .. } => "http",
             ProxyScheme::Https { .. } => "https",
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks4 { .. } => "socks4",
-            #[cfg(feature = "socks")]
+            
             ProxyScheme::Socks5 { .. } => "socks5",
         }
     }
@@ -733,9 +731,9 @@ impl ProxyScheme {
         match self {
             ProxyScheme::Http { host, .. } => host.as_str(),
             ProxyScheme::Https { host, .. } => host.as_str(),
-            #[cfg(feature = "socks")]
+
             ProxyScheme::Socks4 { .. } => panic!("socks4"),
-            #[cfg(feature = "socks")]
+        
             ProxyScheme::Socks5 { .. } => panic!("socks5"),
         }
     }
@@ -746,11 +744,9 @@ impl fmt::Debug for ProxyScheme {
         match self {
             ProxyScheme::Http { auth: _auth, host } => write!(f, "http://{host}"),
             ProxyScheme::Https { auth: _auth, host } => write!(f, "https://{host}"),
-            #[cfg(feature = "socks")]
             ProxyScheme::Socks4 { addr } => {
                 write!(f, "socks4://{addr}")
             }
-            #[cfg(feature = "socks")]
             ProxyScheme::Socks5 {
                 addr,
                 auth: _auth,
@@ -1137,7 +1133,6 @@ mod tests {
         let (scheme, host) = match p.intercept(&url(s)).unwrap() {
             ProxyScheme::Http { host, .. } => ("http", host),
             ProxyScheme::Https { host, .. } => ("https", host),
-            #[cfg(feature = "socks")]
             _ => panic!("intercepted as socks"),
         };
         http::Uri::builder()

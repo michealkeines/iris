@@ -9,7 +9,7 @@ use http::header::ACCEPT;
 use http::{HeaderMap, HeaderValue};
 use quinn::TransportConfig;
 use quinn::VarInt;
-use tokio::net::unix::SocketAddr;
+use std::net::SocketAddr;
 use std::collections::HashMap;
 use std::net::IpAddr;
 use std::sync::Arc;
@@ -25,15 +25,15 @@ pub enum HTTPVersion {
 }
 
 pub struct ConnectionSettings {
-    connect_timeout: Option<Duration>,
-    connection_verbose: bool,
-    pool_idle_timeout: Option<Duration>,
-    pool_max_idle_per_host: usize,
-    tcp_keepalive: Option<Duration>,
-    read_timeout: Option<Duration>,
-    nodelay: bool,
-    local_address: Option<IpAddr>,
-    interface: Option<String>,
+    pub connect_timeout: Option<Duration>,
+    pub connection_verbose: bool,
+    pub pool_idle_timeout: Option<Duration>,
+    pub pool_max_idle_per_host: usize,
+    pub tcp_keepalive: Option<Duration>,
+    pub read_timeout: Option<Duration>,
+    pub nodelay: bool,
+    pub local_address: Option<IpAddr>,
+    pub interface: Option<String>,
 }
 
 impl Default for ConnectionSettings {
@@ -53,17 +53,17 @@ impl Default for ConnectionSettings {
 }
 
 pub struct TLSSettings {
-    hostname_verification: bool,
-    certs_verification: bool,
-    tls_sni: bool,
-    root_certs: Vec<Certificate>,
-    tls_built_in_root_certs: bool,
-    tls_built_in_certs_webpki: bool,
-    tls_built_in_certs_native: bool,
-    min_tls_version: Option<tls::Version>,
-    max_tls_version: Option<tls::Version>,
-    tls_info: bool,
-    https_only: bool,
+    pub hostname_verification: bool,
+    pub certs_verification: bool,
+    pub tls_sni: bool,
+    pub root_certs: Vec<Certificate>,
+    pub tls_built_in_root_certs: bool,
+    pub tls_built_in_certs_webpki: bool,
+    pub tls_built_in_certs_native: bool,
+    pub min_tls_version: Option<tls::Version>,
+    pub max_tls_version: Option<tls::Version>,
+    pub tls_info: bool,
+    pub https_only: bool,
 }
 
 impl Default for TLSSettings {
@@ -109,20 +109,20 @@ impl Default for Config {
 
 
         Config {
-            accepts: Accepts,
+            accepts: Accepts::default(),
             headers: headers,
-            connection_settings: ConnectionSettings,
+            connection_settings: ConnectionSettings::default(),
             proxies: Vec::new(),
             referer: true,
-            tls: TlsBackend,
+            tls: TlsBackend::default(),
             http_version: HTTPVersion::ALL,
-            tls_settings: TLSSettings,
-            redirect_settings: RedirectSettings,
-            http1_settings: HTTP1Settings,
-            http2_settings: HTTP2Settings,
-            http3_settings: HTTP3Settings,
-            cookie_settings: CookieSettings,
-            dns_settings: DNSSettings,
+            tls_settings: TLSSettings::default(),
+            redirect_settings: RedirectSettings::default(),
+            http1_settings: HTTP1Settings::default(),
+            http2_settings: HTTP2Settings::default(),
+            http3_settings: HTTP3Settings::default(),
+            cookie_settings: CookieSettings::default(),
+            dns_settings: DNSSettings::default(),
             error: None,
         }
     }
@@ -130,8 +130,8 @@ impl Default for Config {
 
 
 pub struct DNSSettings {
-    dns_overrides: HashMap<String, Vec<SocketAddr>>,
-    dns_resolver: Option<Arc<dyn Resolve>>,
+    pub dns_overrides: HashMap<String, Vec<SocketAddr>>,
+    pub dns_resolver: Option<Arc<dyn Resolve>>,
 }
 
 impl Default for DNSSettings {
@@ -144,7 +144,7 @@ impl Default for DNSSettings {
 }
 
 pub struct RedirectSettings {
-    redirect_policy: redirect::Policy,
+    pub redirect_policy: redirect::Policy,
 }
 
 impl Default for RedirectSettings {
@@ -156,7 +156,7 @@ impl Default for RedirectSettings {
 }
 
 pub struct CookieSettings {
-    cookie_store: Option<Arc<dyn cookie::CookieStore>>,
+    pub cookie_store: Option<Arc<dyn cookie::CookieStore>>,
 }
 
 impl Default for CookieSettings {
@@ -168,13 +168,13 @@ impl Default for CookieSettings {
 }
 
 pub struct HTTP2Settings {
-    http2_initial_stream_window_size: Option<u32>,
-    http2_initial_connection_window_size: Option<u32>,
-    http2_adaptive_window: bool,
-    http2_max_frame_size: Option<u32>,
-    http2_keep_alive_interval: Option<Duration>,
-    http2_keep_alive_timeout: Option<Duration>,
-    http2_keep_alive_while_idle: bool,
+    pub http2_initial_stream_window_size: Option<u32>,
+    pub http2_initial_connection_window_size: Option<u32>,
+    pub http2_adaptive_window: bool,
+    pub http2_max_frame_size: Option<u32>,
+    pub http2_keep_alive_interval: Option<Duration>,
+    pub http2_keep_alive_timeout: Option<Duration>,
+    pub http2_keep_alive_while_idle: bool,
 }
 
 impl Default for HTTP2Settings {
@@ -188,16 +188,15 @@ impl Default for HTTP2Settings {
             http2_keep_alive_timeout: None,
             http2_keep_alive_while_idle: false,
         }    
-        }
     }
 }
 
 pub struct HTTP1Settings {
-    http09_responses: bool,
-    http1_title_case_headers: bool,
-    http1_allow_obsolete_multiline_headers_in_responses: bool,
-    http1_ignore_invalid_headers_in_responses: bool,
-    http1_allow_spaces_after_header_name_in_responses: bool,
+    pub http09_responses: bool,
+    pub http1_title_case_headers: bool,
+    pub http1_allow_obsolete_multiline_headers_in_responses: bool,
+    pub http1_ignore_invalid_headers_in_responses: bool,
+    pub http1_allow_spaces_after_header_name_in_responses: bool,
 }
 
 impl Default for HTTP1Settings {
@@ -213,11 +212,11 @@ impl Default for HTTP1Settings {
 }
 
 pub struct HTTP3Settings {
-    tls_enable_early_data: bool,
-    quic_max_idle_timeout: Option<Duration>,
-    quic_stream_receive_window: Option<VarInt>,
-    quic_receive_window: Option<VarInt>,
-    quic_send_window: Option<u64>,
+    pub tls_enable_early_data: bool,
+    pub quic_max_idle_timeout: Option<Duration>,
+    pub quic_stream_receive_window: Option<VarInt>,
+    pub quic_receive_window: Option<VarInt>,
+    pub quic_send_window: Option<u64>,
 }
 
 impl Default for HTTP3Settings {

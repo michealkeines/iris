@@ -9,3 +9,6 @@ pub mod proxy;
 pub mod into_url;
 pub mod util;
 pub mod body;
+pub mod  connect;
+pub mod response;
+pub mod request;
